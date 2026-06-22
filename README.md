@@ -166,22 +166,7 @@ AI_Startup_Mentor/
 
 ---
 
-## 9. Team Ownership (for the viva)
-
-| Member | Owns |
-|--------|------|
-| **Student A** | Agent 1 (Idea Validation) + Agent 5 (Risk) + LangSmith eval setup |
-| **Student B** | Agent 2 (Market & Competitor Intel) + tool integrations (Tavily, YC) |
-| **Student C** | Agent 3 (Strategy + routing) + Agent 4 (Biz Model/MVP) + Streamlit UI + PDF |
-
-> Each agent must be runnable in isolation against a mock state input, so any member can demo
-> their piece independently even if the full pipeline breaks on the day.
-> **Day 1 rule:** agree on and commit the `GraphState` schema; treat it as read-only until the
-> whole team approves a change (prevents silent schema drift / merge conflicts).
-
----
-
-## 10. Setup (planned)
+## 9. Setup (planned)
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
@@ -193,18 +178,4 @@ streamlit run app.py
 
 ---
 
-## 11. Known Limitations (stated honestly)
 
-- Competitor data is only as good as live search results; niche markets may return little.
-- Market-size estimates are qualitative unless concrete numbers appear in search results.
-- The system advises; it does not replace real customer discovery or legal review.
-- Free-tier search rate limits constrain how many fresh runs can be done in a session.
-
----
-
-## 12. Future Work
-
-- Add a customer-discovery agent that generates interview scripts.
-- Persist past validations to a database for longitudinal comparison.
-- Swap the YC search for a richer data source if a budget becomes available.
-```
