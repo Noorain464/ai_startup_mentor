@@ -1,4 +1,4 @@
-# Startup Idea Validator — A Multi-Agent System
+# AI Startup Mentor — A Multi-Agent System
 
 > An AI "startup mentor" that takes a raw startup idea and runs it through a pipeline of
 > specialized agents — validating the problem, researching the market, defining strategy,
