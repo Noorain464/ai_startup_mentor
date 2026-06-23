@@ -5,8 +5,15 @@
 > designing a business model + MVP, and stress-testing risk — before producing a structured
 > validation report with a human-in-the-loop approval gate.
 
-**Status:** Capstone project proposal (for instructor validation)
+**Course:** Multi-Agent Orchestration [AI/ML] — Capstone Project
+**Status:** Project proposal (for instructor validation)
 **Type:** Multi-agent LLM system with tool use, structured outputs, conditional routing, and a human approval gate.
+**Team size:** 3 students (brief allows 3–5)
+**Evaluation:** 10 min presentation + 5 min Q&A (exam week, 25–30 June)
+
+> **Not a chatbot.** This is a multi-step pipeline with 5 specialized agents, structured
+> hand-offs, real tool use, conditional routing, guardrails, and a human approval gate —
+> directly addressing the brief's requirement that the project not be a simple one-prompt app.
 
 ---
 
@@ -122,19 +129,50 @@ These are the system's "interesting" behaviors — the parts worth demoing and d
 
 ---
 
-## 7. Rubric Mapping
+## 7. Compliance with Capstone Brief
 
-| Rubric criterion | Where it's satisfied |
-|------------------|----------------------|
-| Multi-agent system | 5 specialized agents in a LangGraph graph |
-| Correct graph flow / routing | 2+ conditional branches (clarify loop, strategy branch, escalation) |
-| State management | Single `GraphState` TypedDict shared across all agents |
-| ≥2 tool integrations | Tavily web search + YC directory search |
-| Structured outputs | Pydantic v2 models for every agent hand-off |
-| Human-in-the-loop | Functional "Approve & Generate Report" gate before PDF |
-| Guardrails | Regulatory-risk escalation node |
-| Observability / debugging | LangSmith tracing on all runs + 5 eval scenarios |
-| Demo-ready output | Streamlit UI + downloadable PDF report |
+### 7.1 Minimum Technical Requirements
+
+| Requirement (brief §4) | How this project meets it |
+|------------------------|---------------------------|
+| **Multi-agent orchestration** (≥3 agents) | **5** specialized agents, each with a distinct role and a clean hand-off |
+| **LangGraph or equivalent** | **LangGraph** `StateGraph` — explicit nodes, edges, conditional edges |
+| **State management** | Single version-controlled `GraphState` TypedDict shared across all nodes |
+| **Tool use** (≥2 tools) | **Tavily** web search + **YC company directory** search (2 distinct tools) |
+| **Structured outputs** | **Pydantic v2** model validates every agent hand-off (JSON schema) |
+| **Routing or branching** (≥1 conditional) | **3** conditionals: clarify loop, strategy branch, regulatory escalation |
+| **RAG / knowledge grounding** | Live web retrieval (Tavily) grounds Agents 2 & 5; vector RAG deliberately **not** used — see §7.3 |
+| **Evaluation** (≥5 scenarios) | 5 eval scenarios in `evals/run_eval.py`, each logged to LangSmith |
+| **Debugging / observability** | LangSmith tracing on every run (per-node tokens, latency, state) |
+| **Guardrails** | Schema validation + retry, refusal on vague ideas, regulatory escalation gate |
+| **Human-in-the-loop** | Functional "Approve & Generate Report" gate controls the PDF (external action) |
+| **Demo-ready output** | Streamlit app runs end-to-end on sample inputs → downloadable PDF |
+
+### 7.2 Evaluation Rubric (100 marks)
+
+| Criterion | Weight | Our strongest evidence |
+|-----------|:------:|------------------------|
+| Problem selection & product clarity | 10% | Meaningful, non-chatbot problem (founder idea validation); clear target user |
+| Multi-agent architecture | 20% | 5 specialized agents with clear roles and structured hand-offs |
+| LangGraph implementation | 15% | Correct state/nodes/edges + 3 conditional branches |
+| Tool use & integrations | 10% | Tavily + YC search, used meaningfully to ground real competitor data |
+| State, memory & context design | 10% | One `GraphState` read/written cleanly across all agents |
+| Evaluation & debugging | 10% | 5 eval cases + LangSmith traces + honest failure analysis |
+| Guardrails & human-in-the-loop | 10% | Regulatory escalation + approval gate before irreversible PDF |
+| Demo quality & usability | 10% | Streamlit UI, end-to-end, clear per-agent output |
+| Individual contribution clarity | 15% | Each agent isolated + runnable on mock state (see §9 ownership map) |
+
+### 7.3 RAG Justification (required by the brief)
+
+The brief asks us to use retrieval **or justify why not**. Our justification:
+
+> The knowledge this product needs is **fresh and external** — current competitors, recent
+> funding, live market signals — not a fixed internal corpus. A vector store would go stale
+> immediately. So we ground the system with **live web retrieval** (Tavily + scoped YC search)
+> at query time, which is the correct form of grounding for this problem. A traditional
+> embed-and-retrieve RAG pipeline over static documents would add complexity without improving
+> grounding. We can add document RAG later if we ingest a fixed knowledge base (e.g. a corpus of
+> startup post-mortems), but it is out of scope for the MVP.
 
 ---
 
@@ -166,10 +204,31 @@ AI_Startup_Mentor/
 
 ---
 
-## 9. Setup (planned)
+## 9. Team Ownership (for the viva)
+
+| Member | Owns |
+|--------|------|
+| **Student A** | Agent 1 (Idea Validation) + Agent 5 (Risk) + LangSmith eval setup |
+| **Student B** | Agent 2 (Market & Competitor Intel) + tool integrations (Tavily, YC) |
+| **Student C** | Agent 3 (Strategy + routing) + Agent 4 (Biz Model/MVP) + Streamlit UI + PDF |
+
+> Each agent must be runnable in isolation against a mock state input, so any member can demo
+> their piece independently even if the full pipeline breaks on the day.
+> **Day 1 rule:** agree on and commit the `GraphState` schema; treat it as read-only until the
+> whole team approves a change (prevents silent schema drift / merge conflicts).
+
+**Submission (per brief §2):** one shared GitHub repo for the group; additionally, **each student
+individually** submits the Google Form with the repo link and a personal Individual Contribution
+Document. Every member must be able to explain their part in the viva (worth 15% of the grade).
+
+---
+
+## 10. Setup (planned)
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+
+ && source .venv/bin/activate
 pip install -r requirements.txt        # langgraph, langchain-openai, pydantic, tavily-python,
                                         # streamlit, fpdf2, tenacity, langsmith
 cp .env.example .env                    # add OPENAI_API_KEY, TAVILY_API_KEY, LANGCHAIN_API_KEY
