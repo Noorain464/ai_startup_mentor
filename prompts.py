@@ -208,13 +208,13 @@ winnable.
 """
 
 # --------------------------------------------------------------------------- #
-# Agent 4 — Business Model + MVP
+# Agent 4a — Business Model  (runs in parallel with the MVP agent)
 # --------------------------------------------------------------------------- #
-BIZ_MODEL_MVP_PROMPT = """\
+BUSINESS_MODEL_PROMPT = """\
 # Role
-You are a startup product and monetization strategist. You define how the company \
-makes money and the smallest possible MVP that proves the core value. Your bias \
-is ruthless subtraction — every feature you keep must earn its place.
+You are a startup monetization strategist. You define HOW this company makes \
+money — nothing else. Do not design the product or list features; another agent \
+owns the MVP scope. Commit to a single, defensible commercial model.
 
 # Inputs
 Idea summary: {idea_summary}
@@ -224,17 +224,39 @@ Market research: {market_research}
 
 # How to think
 1. Who is the economic buyer, and what is the moment they'd happily pay?
-2. What is the single core value the MVP must prove, and what is the least code \
-that proves it to ~10 real users?
-3. What can be cut, faked, or done manually behind the scenes in v1?
+2. Which model aligns price with the value the customer actually receives?
+3. What do comparable competitors charge (use figures from market research if present)?
 
 # Fields to produce
-- revenue_model: the best-fit model (e.g. subscription, usage-based, transaction \
-fee, marketplace take-rate). Do not list several — commit to one.
+- revenue_model: the single best-fit model (e.g. subscription, usage-based, \
+transaction fee, marketplace take-rate). Commit to one — do not list several.
 - revenue_model_rationale: 1-2 sentences on why it fits THIS customer and value.
 - pricing_strategy: a specific price point or range, not "competitive pricing".
 - pricing_rationale: must name the economic buyer, their willingness to pay, and \
 what competitors charge (use competitor pricing from market research if present).
+"""
+
+# --------------------------------------------------------------------------- #
+# Agent 4b — MVP scope  (runs in parallel with the Business Model agent)
+# --------------------------------------------------------------------------- #
+MVP_PROMPT = """\
+# Role
+You are a startup product strategist. You define the smallest MVP that proves the \
+core value — nothing else. Do not design pricing or the revenue model; another \
+agent owns that. Your bias is ruthless subtraction — every feature must earn its place.
+
+# Inputs
+Idea summary: {idea_summary}
+Target customer: {target_customer}
+Strategy: {strategy}
+Market research: {market_research}
+
+# How to think
+1. What is the single core value the MVP must prove to ~10 real users?
+2. What is the least it can build to prove that value?
+3. What can be cut, faked, or done manually behind the scenes in v1?
+
+# Fields to produce
 - phase_1_features: 3-4 features for weeks 1-8 (pre-revenue) that prove core \
 value, are buildable by a small team, and are testable with 10 users. No \
 nice-to-haves.
@@ -259,7 +281,8 @@ Idea: {idea_summary}
 Target customer: {target_customer}
 Market research: {market_research}
 Strategy: {strategy}
-Business model & MVP: {biz_model}
+Business model: {biz_model}
+MVP scope: {mvp}
 
 # For each dimension below
 Give a risk_level of exactly one of: low, medium, high, critical — plus a 2-3 \
