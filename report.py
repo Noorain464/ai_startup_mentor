@@ -118,15 +118,17 @@ def generate_pdf(state: GraphState, out_dir: str = "reports") -> str:
             pdf.field("Category name", st.category_name or "-")
             pdf.field("Wedge use case", st.wedge_use_case or "-")
 
-    # --- Business model ---
+    # --- Business model + MVP (produced by the two parallel agents) ---
     bm = state.get("biz_model")
+    mvp = state.get("mvp")
     pdf.section("4. Business Model & MVP")
     if bm:
         pdf.field("Revenue model", f"{bm.revenue_model} - {bm.revenue_model_rationale}")
         pdf.field("Pricing", f"{bm.pricing_strategy} - {bm.pricing_rationale}")
-        pdf.bullets("Phase 1 features (pre-revenue)", bm.phase_1_features)
-        pdf.bullets("Phase 2 features (first revenue)", bm.phase_2_features)
-        pdf.bullets("Tech requirements", bm.tech_requirements)
+    if mvp:
+        pdf.bullets("Phase 1 features (pre-revenue)", mvp.phase_1_features)
+        pdf.bullets("Phase 2 features (first revenue)", mvp.phase_2_features)
+        pdf.bullets("Tech requirements", mvp.tech_requirements)
 
     # --- Risk ---
     rk = state.get("risk")

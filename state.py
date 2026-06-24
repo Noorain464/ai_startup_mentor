@@ -13,6 +13,7 @@ from models import (
     BizModelOutput,
     IdeaValidationOutput,
     MarketResearchOutput,
+    MVPOutput,
     RiskAssessmentOutput,
     StrategyOutput,
 )
@@ -22,6 +23,10 @@ class GraphState(TypedDict, total=False):
     # --- input ---
     user_input: str
     clarification_context: str  # answers appended on re-submission
+
+    # --- revision control (human-in-the-loop re-run) ---
+    start_at: str        # which section to (re)start from: idea|market|strategy|biz_mvp|risk
+    revision_note: str   # optional founder feedback injected on a re-run
 
     # --- Agent 1 ---
     idea_validation: IdeaValidationOutput
@@ -40,8 +45,9 @@ class GraphState(TypedDict, total=False):
     # --- Agent 3 ---
     strategy: StrategyOutput
 
-    # --- Agent 4 ---
+    # --- Agent 4 (parallel: business model + MVP) ---
     biz_model: BizModelOutput
+    mvp: MVPOutput
 
     # --- Agent 5 ---
     risk: RiskAssessmentOutput

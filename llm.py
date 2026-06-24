@@ -70,6 +70,19 @@ def get_llm(temperature: float = 0.2):
     )
 
 
+def with_revision(prompt: str, state) -> str:
+    """Append founder feedback to a prompt when the pipeline is being re-run
+    from a section the human was not satisfied with."""
+    note = state.get("revision_note")
+    if note:
+        return (
+            f"{prompt}\n\nIMPORTANT — the founder was NOT satisfied with the "
+            f"previous result and requested changes: {note}\n"
+            "Address this explicitly and produce a meaningfully revised output."
+        )
+    return prompt
+
+
 def _text(content) -> str:
     """Coerce a message's content (str or list-of-blocks) into plain text."""
     if isinstance(content, str):

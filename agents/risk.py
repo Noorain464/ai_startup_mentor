@@ -7,7 +7,7 @@ for conditional #3 and the guardrail escalation gate.
 
 from __future__ import annotations
 
-from llm import run_structured
+from llm import run_structured, with_revision
 from logconf import get_logger
 from models import RiskAssessmentOutput
 from prompts import RISK_ASSESSMENT_PROMPT
@@ -21,6 +21,7 @@ def risk_node(state: GraphState) -> dict:
     strategy = state.get("strategy")
     market = state.get("market_research")
     biz = state.get("biz_model")
+    mvp = state.get("mvp")
 
     prompt = RISK_ASSESSMENT_PROMPT.format(
         idea_summary=state.get("idea_summary", ""),
@@ -28,7 +29,9 @@ def risk_node(state: GraphState) -> dict:
         market_research=market.model_dump_json(indent=2) if market else "{}",
         strategy=strategy.model_dump_json(indent=2) if strategy else "{}",
         biz_model=biz.model_dump_json(indent=2) if biz else "{}",
+        mvp=mvp.model_dump_json(indent=2) if mvp else "{}",
     )
+    prompt = with_revision(prompt, state)
 
     result: RiskAssessmentOutput = run_structured(RiskAssessmentOutput, prompt, temperature=0.3)
 

@@ -8,7 +8,7 @@ The graph routes to exactly one of these based on `competitor_count`.
 
 from __future__ import annotations
 
-from llm import run_structured
+from llm import run_structured, with_revision
 from logconf import get_logger
 from models import StrategyOutput
 from prompts import (
@@ -32,6 +32,7 @@ def strategy_category_node(state: GraphState) -> dict:
         target_customer=state.get("target_customer", ""),
         market_research=_market_json(state),
     )
+    prompt = with_revision(prompt, state)
     result: StrategyOutput = run_structured(StrategyOutput, prompt, temperature=0.4)
     log.info("✓ Agent 3 done — type=%s key_message=%r", result.strategy_type, result.key_message)
     return {"strategy": result}
@@ -56,6 +57,7 @@ def strategy_differentiation_node(state: GraphState) -> dict:
         competitors_list=competitors_list,
         market_research=_market_json(state),
     )
+    prompt = with_revision(prompt, state)
     result: StrategyOutput = run_structured(StrategyOutput, prompt, temperature=0.4)
     log.info("✓ Agent 3 done — type=%s axis=%s usp=%r", result.strategy_type,
              result.differentiation_axis, result.usp)

@@ -125,12 +125,11 @@ Tasks:
 """
 
 # --------------------------------------------------------------------------- #
-# Agent 4 — Business Model + MVP
+# Agent 4a — Business Model  (parallel with MVP)
 # --------------------------------------------------------------------------- #
 
-BIZ_MODEL_MVP_PROMPT = """\
-You are a startup product and monetization strategist. Define the commercial
-model and a ruthless MVP scope.
+BUSINESS_MODEL_PROMPT = """\
+You are a startup monetization strategist. Define the commercial model only.
 
 Idea Summary: {idea_summary}
 Target Customer: {target_customer}
@@ -142,11 +141,26 @@ Tasks:
    (revenue_model_rationale).
 2. pricing_strategy — a specific price point/range; pricing_rationale must name
    the economic buyer, willingness to pay, and what competitors charge.
-3. phase_1_features (weeks 1-8, pre-revenue): 3-4 features that prove core value,
+"""
+
+# --------------------------------------------------------------------------- #
+# Agent 4b — MVP scope  (parallel with Business Model)
+# --------------------------------------------------------------------------- #
+
+MVP_PROMPT = """\
+You are a startup product strategist. Define a ruthless MVP scope only.
+
+Idea Summary: {idea_summary}
+Target Customer: {target_customer}
+Strategy: {strategy}
+Market Research: {market_research}
+
+Tasks:
+1. phase_1_features (weeks 1-8, pre-revenue): 3-4 features that prove core value,
    buildable by a small team, testable with 10 users.
-4. phase_2_features (weeks 9-20, first revenue): 3-4 features needed to charge and
+2. phase_2_features (weeks 9-20, first revenue): 3-4 features needed to charge and
    retain the first 10 paying customers.
-5. tech_requirements: 3-5 non-obvious technical decisions/dependencies.
+3. tech_requirements: 3-5 non-obvious technical decisions/dependencies.
 Be ruthless about scope — no nice-to-haves.
 """
 
@@ -163,7 +177,8 @@ Idea: {idea_summary}
 Target Customer: {target_customer}
 Market Research: {market_research}
 Strategy: {strategy}
-Business Model & MVP: {biz_model}
+Business Model: {biz_model}
+MVP Scope: {mvp}
 
 For each dimension give risk_level (low/medium/high/critical), a 2-3 sentence
 description, and a concrete mitigation:

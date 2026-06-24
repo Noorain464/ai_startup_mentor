@@ -6,7 +6,7 @@ proceed or bounce back to the user with clarifying questions (conditional #1).
 
 from __future__ import annotations
 
-from llm import run_structured
+from llm import run_structured, with_revision
 from logconf import get_logger
 from models import IdeaValidationOutput
 from prompts import IDEA_VALIDATION_PROMPT
@@ -26,6 +26,7 @@ def idea_validation_node(state: GraphState) -> dict:
         user_input=state["user_input"],
         clarification_context=clar_block,
     )
+    prompt = with_revision(prompt, state)
 
     result: IdeaValidationOutput = run_structured(IdeaValidationOutput, prompt)
 

@@ -87,7 +87,7 @@ class StrategyOutput(BaseModel):
 
 
 # --------------------------------------------------------------------------- #
-# Agent 4 — Business Model + MVP
+# Agent 4a — Business Model   (runs in parallel with the MVP agent)
 # --------------------------------------------------------------------------- #
 
 
@@ -105,6 +105,14 @@ class BizModelOutput(BaseModel):
     revenue_model_rationale: str
     pricing_strategy: str
     pricing_rationale: str
+
+
+# --------------------------------------------------------------------------- #
+# Agent 4b — MVP scope   (runs in parallel with the Business Model agent)
+# --------------------------------------------------------------------------- #
+
+
+class MVPOutput(BaseModel):
     phase_1_features: List[str] = Field(default_factory=list)
     phase_2_features: List[str] = Field(default_factory=list)
     tech_requirements: List[str] = Field(default_factory=list)

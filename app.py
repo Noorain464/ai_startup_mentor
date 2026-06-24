@@ -15,7 +15,7 @@ from __future__ import annotations
 import streamlit as st
 from dotenv import load_dotenv
 
-from graph import run_validation
+from graph import SECTION_LABELS, SECTIONS, run_validation
 from report import generate_pdf
 
 load_dotenv()
@@ -37,8 +37,22 @@ if "clarify_answers" not in st.session_state:
 
 
 def _run(idea: str, clarification: str = ""):
-    with st.spinner("Running the 5-agent validation pipeline…"):
+    with st.spinner("Running the multi-agent validation pipeline…"):
         st.session_state.result = run_validation(idea, clarification)
+
+
+def _rerun_from(section: str, note: str):
+    """Re-run the pipeline from a chosen section, reusing earlier results."""
+    prior = st.session_state.result
+    label = SECTION_LABELS.get(section, section)
+    with st.spinner(f"Re-running from {label}…"):
+        st.session_state.result = run_validation(
+            prior["user_input"],
+            prior.get("clarification_context", ""),
+            start_at=section,
+            revision_note=note,
+            prior_state=prior,
+        )
 
 
 # --------------------------------------------------------------------------- #
@@ -123,17 +137,23 @@ def render_strategy(state):
 
 def render_biz(state):
     bm = state.get("biz_model")
-    if not bm:
-        return
-    st.write(f"**Revenue model:** {bm.revenue_model} — {bm.revenue_model_rationale}")
-    st.write(f"**Pricing:** {bm.pricing_strategy} — {bm.pricing_rationale}")
-    st.write("**Phase 1 (pre-revenue):**")
-    for f in bm.phase_1_features:
-        st.write(f"  - {f}")
-    st.write("**Phase 2 (first revenue):**")
-    for f in bm.phase_2_features:
-        st.write(f"  - {f}")
-    st.write("**Tech requirements:** " + ", ".join(bm.tech_requirements))
+    mvp = state.get("mvp")
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("**Business Model** *(parallel agent 4a)*")
+        if bm:
+            st.write(f"**Revenue model:** {bm.revenue_model} — {bm.revenue_model_rationale}")
+            st.write(f"**Pricing:** {bm.pricing_strategy} — {bm.pricing_rationale}")
+    with col_b:
+        st.markdown("**MVP Scope** *(parallel agent 4b)*")
+        if mvp:
+            st.write("**Phase 1 (pre-revenue):**")
+            for f in mvp.phase_1_features:
+                st.write(f"  - {f}")
+            st.write("**Phase 2 (first revenue):**")
+            for f in mvp.phase_2_features:
+                st.write(f"  - {f}")
+            st.write("**Tech requirements:** " + ", ".join(mvp.tech_requirements))
 
 
 def render_risk(state):
@@ -192,16 +212,36 @@ if result:
         st.divider()
         st.subheader("Human approval")
         st.caption(
-            "Generating the PDF is the system's irreversible action. "
-            "It only runs when you approve."
+            "Generating the PDF is the system's irreversible action. Approve to "
+            "download it, or request changes to re-run the pipeline from a section."
         )
-        if st.button("✅ Approve & Generate Report", type="primary"):
-            path = generate_pdf(result)
-            with open(path, "rb") as fh:
-                st.download_button(
-                    "⬇️ Download validation report (PDF)",
-                    data=fh.read(),
-                    file_name=path.split("/")[-1],
-                    mime="application/pdf",
+
+        approve_col, changes_col = st.columns(2)
+
+        # --- Approve → generate + download the PDF ---
+        with approve_col:
+            if st.button("✅ Approve & Generate Report", type="primary"):
+                path = generate_pdf(result)
+                with open(path, "rb") as fh:
+                    st.download_button(
+                        "⬇️ Download validation report (PDF)",
+                        data=fh.read(),
+                        file_name=path.split("/")[-1],
+                        mime="application/pdf",
+                    )
+                st.success(f"Report generated: {path}")
+
+        # --- Request changes → pick ONE section, re-run from there ---
+        with changes_col:
+            with st.form("request_changes"):
+                st.write("**Not satisfied?** Choose the section to revise:")
+                section = st.radio(
+                    "Section to re-run from",
+                    options=SECTIONS,
+                    format_func=lambda s: SECTION_LABELS[s],
+                    label_visibility="collapsed",
                 )
-            st.success(f"Report generated: {path}")
+                note = st.text_input("What should change? (optional)")
+                if st.form_submit_button("🔁 Re-run from this section"):
+                    _rerun_from(section, note)
+                    st.rerun()

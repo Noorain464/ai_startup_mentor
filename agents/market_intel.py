@@ -6,7 +6,7 @@ real results, then extracts market size, signals, segments, and competitors.
 
 from __future__ import annotations
 
-from llm import run_structured
+from llm import run_structured, with_revision
 from logconf import get_logger
 from models import MarketResearchOutput
 from prompts import MARKET_RESEARCH_PROMPT
@@ -35,6 +35,7 @@ def market_research_node(state: GraphState) -> dict:
         web_search_results=web_str,
         yc_search_results=yc_str,
     )
+    prompt = with_revision(prompt, state)
 
     result: MarketResearchOutput = run_structured(MarketResearchOutput, prompt)
 
