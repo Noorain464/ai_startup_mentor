@@ -217,9 +217,11 @@ AI_Startup_Mentor/
 
 | Member | Owns |
 |--------|------|
-| **Student A** | Agent 1 (Idea Validation) + Agent 5 (Risk) + eval suite + logging/observability |
-| **Student B** | Agent 2 (Market & Competitor Intel) + tool integrations (Tavily, YC) |
-| **Student C** | Agent 3 (Strategy + routing) + Agents 4a/4b (parallel Biz Model + MVP) + Streamlit UI + PDF + re-run flow |
+| **Noorain** | Agent 2 (Market & Competitor Intel) + Agent 3 (Strategy + routing) + tool integrations (Tavily, YC) + graph orchestration |
+| **Pooja** | Agent 1 (Idea Validation) + Agent 4b (MVP, parallel) + all prompts |
+| **Shruti** | Agent 4a (Business Model, parallel) + Agent 5 (Risk + guardrail) + the 5 evaluation test cases |
+
+> Detailed per-node ownership and viva talking points are in [GRAPH.md](GRAPH.md) §8.
 
 > Each agent must be runnable in isolation against a mock state input, so any member can demo
 > their piece independently even if the full pipeline breaks on the day.
