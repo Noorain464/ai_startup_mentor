@@ -1,22 +1,5 @@
 # AI Startup Mentor — A Multi-Agent System
 
-> An AI "startup mentor" that takes a raw startup idea and runs it through a pipeline of
-> specialized agents — validating the problem, researching the market, defining strategy,
-> designing a business model + MVP, and stress-testing risk — before producing a structured
-> validation report with a human-in-the-loop approval gate.
-
-**Course:** Multi-Agent Orchestration [AI/ML] — Capstone Project
-**Status:** Project proposal (for instructor validation)
-**Type:** Multi-agent LLM system with tool use, structured outputs, conditional routing, and a human approval gate.
-**Team size:** 3 students (brief allows 3–5)
-**Evaluation:** 10 min presentation + 5 min Q&A (exam week, 25–30 June)
-
-> **Not a chatbot.** This is a multi-step pipeline with 5 specialized agents, structured
-> hand-offs, real tool use, conditional routing, guardrails, and a human approval gate —
-> directly addressing the brief's requirement that the project not be a simple one-prompt app.
-
----
-
 ## 1. Problem
 
 Most early-stage founders fall in love with a *solution* before they have validated the
