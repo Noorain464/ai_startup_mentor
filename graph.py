@@ -45,12 +45,14 @@ from state import GraphState
 log = get_logger("graph")
 
 # Section keys used by the entry router and the UI's "request changes" flow.
-SECTIONS = ["idea", "market", "strategy", "biz_mvp", "risk"]
+# Business Model and MVP are SEPARATE sections so the human can revise just one.
+SECTIONS = ["idea", "market", "strategy", "biz_model", "mvp", "risk"]
 SECTION_LABELS = {
     "idea": "1 · Idea Validation",
     "market": "2 · Market & Competitor Intelligence",
     "strategy": "3 · Strategy",
-    "biz_mvp": "4 · Business Model & MVP",
+    "biz_model": "4a · Business Model",
+    "mvp": "4b · MVP Scope",
     "risk": "5 · Risk Assessment",
 }
 
@@ -99,8 +101,10 @@ def route_entry(state: GraphState):
         target = "market_research"
     elif start == "strategy":
         target = _strategy_target(state)
-    elif start == "biz_mvp":
-        target = ["business_model", "mvp"]  # fan out to both parallel nodes
+    elif start == "biz_model":
+        target = "business_model"   # re-run Business Model only (MVP reused from prior state)
+    elif start == "mvp":
+        target = "mvp"              # re-run MVP only (Business Model reused from prior state)
     elif start == "risk":
         target = "risk"
     else:

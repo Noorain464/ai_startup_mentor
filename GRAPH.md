@@ -171,7 +171,8 @@ state back in, so only that section onward re-runs:
 | `idea` (default) | `validate_idea` |
 | `market` | `market_research` |
 | `strategy` | `strategy_category` or `strategy_diff` (by `competitor_count`) |
-| `biz_mvp` | **both** `business_model` + `mvp` (parallel) |
+| `biz_model` | `business_model` only (MVP reused from prior state) |
+| `mvp` | `mvp` only (Business Model reused from prior state) |
 | `risk` | `risk` |
 
 ---
@@ -267,20 +268,21 @@ Founder answers → `clarification_context` is filled, idea becomes:
 
 ### Pass 3 — human rejects the MVP section
 At the approval gate the human is **not satisfied with the MVP scope** and writes a note
-*"focus on offline-first for clinics with poor internet"*. They pick section **`biz_mvp`**.
+*"focus on offline-first for clinics with poor internet"*. They pick section **`mvp`**
+(Business Model and MVP are separately selectable).
 
 | Step | Node | State change |
 |------|------|--------------|
-| 16 | UI | `start_at="biz_mvp"`, `revision_note="focus on offline-first..."`, prior state reused |
-| 17 | `START` → `route_entry` | `start_at="biz_mvp"` → **`[business_model, mvp]`** (re-enters at the parallel pair) |
-| 18a | `business_model` | re-runs with the note injected via `with_revision()` |
-| 18b | `mvp` | re-runs → new `phase_1_features` emphasizing offline-first |
-| 19 | `risk` | re-evaluates with the revised plan |
+| 16 | UI | `start_at="mvp"`, `revision_note="focus on offline-first..."`, prior state reused |
+| 17 | `START` → `route_entry` | `start_at="mvp"` → **`mvp`** (re-enters at the MVP node only) |
+| 18 | `mvp` | re-runs with the note injected via `with_revision()` → new offline-first `phase_1_features` |
+| 19 | `risk` | re-evaluates using the new MVP + the **reused** Business Model from prior state |
 | 20 | `route_after_risk` (#3) | still regulated → `escalate` → `END` |
 
-Idea Validation, Market, and Strategy are **not** re-run — their earlier results are
-reused from the prior state. The human approves → **PDF generated** (the only
-irreversible action).
+Idea Validation, Market, Strategy, **and Business Model** are **not** re-run — their
+earlier results are reused from the prior state. (Picking `biz_model` instead would
+re-run only Business Model and reuse the prior MVP.) The human approves → **PDF
+generated** (the only irreversible action).
 
 > Demonstrates: the conditional entry point, revision-note injection, and that a re-run
 > only touches the chosen section onward.

@@ -25,7 +25,7 @@ class GraphState(TypedDict, total=False):
     clarification_context: str  # answers appended on re-submission
 
     # --- revision control (human-in-the-loop re-run) ---
-    start_at: str        # which section to (re)start from: idea|market|strategy|biz_mvp|risk
+    start_at: str        # (re)start section: idea|market|strategy|biz_model|mvp|risk
     revision_note: str   # optional founder feedback injected on a re-run
 
     # --- Agent 1 ---
